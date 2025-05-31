@@ -17,7 +17,8 @@ import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import SignUpForm from "./components/sign-up-form";
+import SignUpForm from "@/app/authentication/components/sign-up-form";
+import LoginForm from "./components/login-form";
 
 const AuthenticationPage = () => {
   return (
@@ -28,16 +29,7 @@ const AuthenticationPage = () => {
           <TabsTrigger value="register">Criar conta</TabsTrigger>
         </TabsList>
         <TabsContent value="login">
-          <Card>
-            <CardHeader>
-              <CardTitle>login</CardTitle>
-              <CardDescription>Faça login para continuar</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-2"></CardContent>
-            <CardFooter>
-              <Button>Entrar</Button>
-            </CardFooter>
-          </Card>
+          <LoginForm />
         </TabsContent>
         <TabsContent value="register">
           <SignUpForm />
