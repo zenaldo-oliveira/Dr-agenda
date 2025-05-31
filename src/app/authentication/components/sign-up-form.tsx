@@ -1,5 +1,4 @@
-"use client";
-
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -10,207 +9,144 @@ import {
 } from "@/components/ui/card";
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { TabsContent } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
 
+// Schema de validação com Zod
 const registerSchema = z
   .object({
-    name: z.string().trim().min(1, { message: "Nome é obrigatório" }),
-    email: z.string().trim().min(1, { message: "E-mail inválido" }).email(),
-    password: z
+    name: z.string().min(1, { message: "Nome é obrigatório" }),
+    email: z.string().email({ message: "Email inválido" }),
+    senha: z
       .string()
-      .trim()
-      .min(8, { message: "A senha deve ter pelo menos 8 caracteres" }),
-    confirmPassword: z
-      .string()
-      .trim()
-      .min(8, { message: "Confirmação é obrigatória" }),
+      .min(8, { message: "A senha deve ter no mínimo 8 caracteres" }),
+    confirmarSenha: z.string().min(1, { message: "Confirme sua senha" }),
   })
-  .refine((data) => data.password === data.confirmPassword, {
-    path: ["confirmPassword"],
+  .refine((data) => data.senha === data.confirmarSenha, {
     message: "As senhas não coincidem",
+    path: ["confirmarSenha"],
   });
 
+// Componente principal
 const SignUpForm = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
-    mode: "onChange",
     defaultValues: {
       name: "",
       email: "",
-      password: "",
-      confirmPassword: "",
+      senha: "",
+      confirmarSenha: "",
     },
   });
 
-  async function onSubmit(values: z.infer<typeof registerSchema>) {
-    setIsSubmitting(true);
-    // Simulando delay de requisição
-    await new Promise((r) => setTimeout(r, 1500));
-    console.log("Cadastro enviado:", values);
-    setIsSubmitting(false);
+  function onSubmit(values: z.infer<typeof registerSchema>) {
+    console.log(values);
   }
 
   return (
-    <TabsContent value="register">
-      <Card>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} noValidate>
-            <CardHeader>
-              <CardTitle>Crie sua conta</CardTitle>
-              <CardDescription>
-                Preencha os dados abaixo para continuar
-              </CardDescription>
-            </CardHeader>
-
-            <CardContent className="space-y-5">
-              {/* Nome */}
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel htmlFor="name">Nome</FormLabel>
-                    <FormControl>
+    <Card>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <CardHeader>
+            <CardTitle>Criar conta</CardTitle>
+            <CardDescription>Crie uma conta para continuar</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nome</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Digite seu nome" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>E-mail</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Digite seu e-mail" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="senha"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Senha</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Digite sua senha"
+                      type="password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="confirmarSenha"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirmar senha</FormLabel>
+                  <FormControl>
+                    <div className="relative">
                       <Input
-                        id="name"
-                        placeholder="Digite seu nome completo"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Digite novamente a senha"
                         {...field}
-                        aria-invalid={!!form.formState.errors.name}
-                        aria-describedby="name-error"
                       />
-                    </FormControl>
-                    <FormMessage id="name-error" />
-                  </FormItem>
-                )}
-              />
-
-              {/* Email */}
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel htmlFor="email">E-mail</FormLabel>
-                    <FormControl>
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="seu@email.com"
-                        {...field}
-                        aria-invalid={!!form.formState.errors.email}
-                        aria-describedby="email-error"
-                      />
-                    </FormControl>
-                    <FormMessage id="email-error" />
-                  </FormItem>
-                )}
-              />
-
-              {/* Senha */}
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel htmlFor="password">Senha</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Input
-                          id="password"
-                          type={showPassword ? "text" : "password"}
-                          placeholder="Mínimo 8 caracteres"
-                          {...field}
-                          aria-invalid={!!form.formState.errors.password}
-                          aria-describedby="password-error"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword((v) => !v)}
-                          className="absolute top-1/2 right-3 -translate-y-1/2 text-sm text-blue-600 hover:text-blue-800 focus:outline-none"
-                          tabIndex={-1}
-                          aria-label={
-                            showPassword ? "Ocultar senha" : "Mostrar senha"
-                          }
-                        >
-                          {showPassword ? "Ocultar" : "Mostrar"}
-                        </button>
-                      </div>
-                    </FormControl>
-                    <FormMessage id="password-error" />
-                  </FormItem>
-                )}
-              />
-
-              {/* Confirmar Senha */}
-              <FormField
-                control={form.control}
-                name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel htmlFor="confirmPassword">
-                      Confirme sua senha
-                    </FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Input
-                          id="confirmPassword"
-                          type={showConfirmPassword ? "text" : "password"}
-                          placeholder="Digite novamente sua senha"
-                          {...field}
-                          aria-invalid={!!form.formState.errors.confirmPassword}
-                          aria-describedby="confirmPassword-error"
-                          autoComplete="new-password"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowConfirmPassword((v) => !v)}
-                          className="absolute top-1/2 right-3 -translate-y-1/2 text-sm text-blue-600 hover:text-blue-800 focus:outline-none"
-                          tabIndex={-1}
-                          aria-label={
-                            showConfirmPassword
-                              ? "Ocultar senha"
-                              : "Mostrar senha"
-                          }
-                        >
-                          {showConfirmPassword ? "Ocultar" : "Mostrar"}
-                        </button>
-                      </div>
-                    </FormControl>
-                    <FormMessage id="confirmPassword-error" />
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-
-            <CardFooter>
-              <Button
-                type="submit"
-                className="mt-4 w-full"
-                disabled={!form.formState.isValid || isSubmitting}
-              >
-                {isSubmitting ? "Criando conta..." : "Criar conta"}
-              </Button>
-            </CardFooter>
-          </form>
-        </Form>
-      </Card>
-    </TabsContent>
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500"
+                        title={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                      >
+                        {showPassword ? (
+                          <EyeOff size={18} />
+                        ) : (
+                          <Eye size={18} />
+                        )}
+                      </button>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+          <CardFooter>
+            <Button type="submit" className="w-full">
+              Criar conta
+            </Button>
+          </CardFooter>
+        </form>
+      </Form>
+    </Card>
   );
 };
 
