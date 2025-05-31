@@ -18,13 +18,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { authClient } from "@/lib/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
-// ✅ Schema apenas com email e senha
 const loginSchema = z.object({
   email: z.string().email({ message: "Email inválido" }),
   senha: z
@@ -33,6 +35,7 @@ const loginSchema = z.object({
 });
 
 const LoginForm = () => {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -43,8 +46,21 @@ const LoginForm = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof loginSchema>) {
-    console.log("Login:", values);
+  async function onSubmit(values: z.infer<typeof loginSchema>) {
+    await authClient.signIn.email(
+      {
+        email: values.email,
+        password: values.senha,
+      },
+      {
+        onSuccess: () => {
+          router.push("/dashboard");
+        },
+        onError: () => {
+          toast.error("E-mail ou senha inválido");
+        },
+      },
+    );
   }
 
   return (
@@ -102,9 +118,20 @@ const LoginForm = () => {
             />
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full">
-              Entrar
-            </Button>
+            <button
+              type="submit"
+              disabled={form.formState.isSubmitting}
+              className="flex w-full items-center justify-center rounded-md bg-blue-600 px-4 py-2 font-semibold text-white shadow transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {form.formState.isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  Enviando...
+                </>
+              ) : (
+                "Entrar"
+              )}
+            </button>
           </CardFooter>
         </form>
       </Form>
