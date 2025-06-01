@@ -15,6 +15,10 @@ import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { createClinic } from "@/actions/create-clinic";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 // Validação com Zod
 const clinicSchema = z.object({
@@ -37,8 +41,16 @@ const ClinicForm = () => {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof clinicSchema>) => {
-    console.log("Dados enviados:", data);
+  const onSubmit = async (data: z.infer<typeof clinicSchema>) => {
+    try {
+      await createClinic(data.name);
+    } catch (error) {
+      if (isRedirectError(error)) {
+        return;
+      }
+      console.error(error);
+      toast.error("Erro ao criar clinica.");
+    }
   };
 
   return (
@@ -119,13 +131,24 @@ const ClinicForm = () => {
           )}
         />
 
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button type="button" variant="outline">
-              Cancelar
-            </Button>
-          </DialogClose>
-          <Button type="submit">Salvar</Button>
+        <DialogFooter className="flex justify-center gap-4">
+          <DialogClose asChild></DialogClose>
+
+          <Button
+            type="submit"
+            disabled={form.formState.isSubmitting}
+            aria-disabled={form.formState.isSubmitting}
+            className="flex w-full items-center gap-2 transition-colors"
+          >
+            {form.formState.isSubmitting ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Criando...</span>
+              </>
+            ) : (
+              "Criar Clínica"
+            )}
+          </Button>
         </DialogFooter>
       </form>
     </Form>

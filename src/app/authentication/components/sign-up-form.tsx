@@ -128,16 +128,34 @@ const SignUpForm = () => {
                   <FormItem>
                     <FormLabel>Senha</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Digite sua senha"
-                        type="password"
-                        {...field}
-                      />
+                      <div className="relative">
+                        <Input
+                          type={showPassword ? "text" : "password"}
+                          placeholder="Digite sua senha"
+                          className="pr-10"
+                          {...field}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword((prev) => !prev)}
+                          className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500"
+                          title={
+                            showPassword ? "Ocultar senha" : "Mostrar senha"
+                          }
+                        >
+                          {showPassword ? (
+                            <EyeOff size={18} />
+                          ) : (
+                            <Eye size={18} />
+                          )}
+                        </button>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="confirmarSenha"

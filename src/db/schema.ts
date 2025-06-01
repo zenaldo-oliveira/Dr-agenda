@@ -39,9 +39,6 @@ export const sessionsTable = pgTable("sessions", {
     .references(() => usersTable.id, { onDelete: "cascade" }),
 });
 
-// ------------------------
-// 3. Accounts Table
-// ------------------------
 export const accountsTable = pgTable("accounts", {
   id: text("id").primaryKey(),
   accountId: text("account_id").notNull(),
@@ -60,9 +57,6 @@ export const accountsTable = pgTable("accounts", {
   updatedAt: timestamp("updated_at").notNull(),
 });
 
-// ------------------------
-// 4. Verifications Table
-// ------------------------
 export const verificationsTable = pgTable("verifications", {
   id: text("id").primaryKey(),
   identifier: text("identifier").notNull(),
@@ -72,9 +66,6 @@ export const verificationsTable = pgTable("verifications", {
   updatedAt: timestamp("updated_at"),
 });
 
-// ------------------------
-// 5. Clinics Table
-// ------------------------
 export const clinicsTable = pgTable("clinica", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name").notNull(),
@@ -84,9 +75,6 @@ export const clinicsTable = pgTable("clinica", {
     .$onUpdate(() => new Date()),
 });
 
-// ------------------------
-// 6. Doctors Table
-// ------------------------
 export const doctorsTable = pgTable("doctors", {
   id: uuid("id").defaultRandom().primaryKey(),
   clinicId: uuid("clinic_id")
@@ -106,9 +94,6 @@ export const doctorsTable = pgTable("doctors", {
     .$onUpdate(() => new Date()),
 });
 
-// ------------------------
-// 7. Patient Enum + Patients Table
-// ------------------------
 export const patientSexEnum = pgEnum("patient_sex", ["male", "female"]);
 
 export const patientsTable = pgTable("patients", {
@@ -126,9 +111,6 @@ export const patientsTable = pgTable("patients", {
     .$onUpdate(() => new Date()),
 });
 
-// ------------------------
-// 8. Appointments Table
-// ------------------------
 export const appointmentsTable = pgTable("appointments", {
   id: uuid("id").defaultRandom().primaryKey(),
   date: timestamp("date").notNull(),
@@ -147,25 +129,19 @@ export const appointmentsTable = pgTable("appointments", {
     .$onUpdate(() => new Date()),
 });
 
-// ------------------------
-// 9. Users ↔ Clinics (N:M)
-// ------------------------
 export const usersToClinicsTable = pgTable("users_to_clinics", {
   userId: text("user_id")
     .notNull()
-    .references(() => usersTable.id),
+    .references(() => usersTable.id, { onDelete: "cascade" }),
   clinicId: uuid("clinic_id")
     .notNull()
-    .references(() => clinicsTable.id),
+    .references(() => clinicsTable.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
     .$onUpdate(() => new Date()),
 });
 
-// ------------------------
-// 🌐 RELATIONS
-// ------------------------
 export const clinicsTableRelations = relations(clinicsTable, ({ many }) => ({
   doctors: many(doctorsTable),
   patients: many(patientsTable),
