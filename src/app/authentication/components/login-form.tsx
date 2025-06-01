@@ -24,14 +24,18 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner"; 
+import { toast } from "sonner";
 
 import { z } from "zod";
 
 const loginSchema = z.object({
-  email: z.string().email({ message: "Email inválido" }),
+  email: z
+    .string()
+    .min(1, { message: "E-mail é obrigatório" })
+    .email({ message: "Email inválido" }),
   senha: z
     .string()
+    .min(1, { message: "Senha é obrigatória" })
     .min(8, { message: "A senha deve ter no mínimo 8 caracteres" }),
 });
 
