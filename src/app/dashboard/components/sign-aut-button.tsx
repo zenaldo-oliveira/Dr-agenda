@@ -16,7 +16,7 @@ const SignOutButton = () => {
       try {
         await authClient.signOut();
         toast.success("Você saiu com sucesso!");
-        router.push("/"); // redireciona para a home
+        router.push("/dashboard"); // redireciona para a home
       } catch (error) {
         toast.error("Erro ao sair. Tente novamente.");
       }

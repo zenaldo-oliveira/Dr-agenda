@@ -30,6 +30,13 @@ const DashboardPage = async () => {
         </header>
 
         <section>
+          {session.user.image && (
+            <img
+              src={session.user.image}
+              alt={`${session.user.name} foto`}
+              className="mx-auto mb-4 h-24 w-24 rounded-full object-cover"
+            />
+          )}
           <h2 className="text-xl font-semibold">
             Bem-vindo(a), {session.user.name}
           </h2>

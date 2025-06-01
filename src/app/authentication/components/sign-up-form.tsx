@@ -1,5 +1,11 @@
 "use client";
 
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -18,15 +24,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { authClient } from "@/lib/auth-client";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, Loader2, UserPlus } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { DialogClose } from "@/components/ui/dialog"; // Corrigido aqui!
 import { toast, Toaster } from "sonner";
+import { Eye, EyeOff, Loader2, UserPlus, XIcon } from "lucide-react";
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { authClient } from "@/lib/auth-client";
 
 // Schema de validação com Zod
 const registerSchema = z
@@ -68,10 +70,8 @@ const SignUpForm = () => {
       {
         onSuccess: () => {
           toast.success("Conta criada com sucesso!");
-
           router.push("/verifique-seu-email");
         },
-
         onError: (ctx) => {
           console.log(ctx);
           if (ctx.error.code === "USER_ALREADY_EXISTS") {
@@ -87,14 +87,21 @@ const SignUpForm = () => {
   return (
     <>
       <Toaster />
-      <Card>
+      <Card className="relative">
+        {/* Botão para fechar o modal */}
+        <DialogClose className="absolute top-4 right-4 text-gray-500 hover:text-black">
+          <XIcon className="h-5 w-5" />
+        </DialogClose>
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <CardHeader>
               <CardTitle>Criar conta</CardTitle>
               <CardDescription>Crie uma conta para continuar</CardDescription>
             </CardHeader>
+
             <CardContent className="space-y-4">
+              {/* Campo Nome */}
               <FormField
                 control={form.control}
                 name="name"
@@ -108,6 +115,8 @@ const SignUpForm = () => {
                   </FormItem>
                 )}
               />
+
+              {/* Campo Email */}
               <FormField
                 control={form.control}
                 name="email"
@@ -121,6 +130,8 @@ const SignUpForm = () => {
                   </FormItem>
                 )}
               />
+
+              {/* Campo Senha */}
               <FormField
                 control={form.control}
                 name="senha"
@@ -156,6 +167,7 @@ const SignUpForm = () => {
                 )}
               />
 
+              {/* Campo Confirmar Senha */}
               <FormField
                 control={form.control}
                 name="confirmarSenha"
@@ -190,6 +202,7 @@ const SignUpForm = () => {
                 )}
               />
             </CardContent>
+
             <CardFooter>
               <Button
                 type="submit"
