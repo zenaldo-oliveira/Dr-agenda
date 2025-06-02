@@ -33,25 +33,14 @@ export const auth = betterAuth({
         },
       });
 
-      const clinic = clinics[0]; // pode ser undefined!
-
-      // ✅ Verifica se existe antes de acessar
-      if (!clinic || !clinic.clinic) {
-        // Se o usuário não tiver clínica, ainda devolve a sessão sem erro
-        return {
-          user: {
-            ...user,
-            clinic: null, // ou nem inclui essa propriedade se preferir
-          },
-        };
-      }
+      const clinic = clinics?.[0];
 
       return {
         user: {
           ...user,
           clinic: {
-            id: clinic.clinicId,
-            name: clinic.clinic.name,
+            id: clinic?.clinicId,
+            name: clinic?.clinic.name,
           },
         },
       };
