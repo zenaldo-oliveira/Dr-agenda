@@ -4,10 +4,13 @@ import {
   sessionsTable,
   accountsTable,
   verificationsTable,
+  usersToClinicsTable,
 } from "@/db/schema";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import * as schema from "@/db/schema";
+import { customSession } from "better-auth/plugins";
+import { eq } from "drizzle-orm"; // Certifique-se de importar o operador
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -21,6 +24,28 @@ export const auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
   },
+  plugins: [
+    customSession(async ({ user, session }) => {
+      const clinics = await db.query.usersToClinicsTable.findMany({
+        where: eq(usersToClinicsTable.userId, user.id),
+        with: {
+          clinic: true,
+        },
+      });
+
+      //TODO: Ao adicionar as clínicas à sessão, é necessário atualizar o tipo de sessão para incluir as clínicas
+      const clinic = clinics[0];
+      return {
+        user: {
+          ...user,
+          clinic: {
+            id: clinic.clinicId,
+            name: clinic.clinic.name,
+          },
+        },
+      };
+    }),
+  ],
   user: {
     modelName: "usersTable",
   },
