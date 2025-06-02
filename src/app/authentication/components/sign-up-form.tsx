@@ -24,13 +24,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { DialogClose } from "@/components/ui/dialog"; // Corrigido aqui!
 import { toast, Toaster } from "sonner";
 import { Eye, EyeOff, Loader2, UserPlus, XIcon } from "lucide-react";
 
 import { authClient } from "@/lib/auth-client";
 
-// Schema de validação com Zod
+// Validação
 const registerSchema = z
   .object({
     name: z.string().min(1, { message: "Nome é obrigatório" }),
@@ -45,8 +44,11 @@ const registerSchema = z
     path: ["confirmarSenha"],
   });
 
-// Componente principal
-const SignUpForm = () => {
+interface SignUpFormProps {
+  onClose?: () => void;
+}
+
+const SignUpForm = ({ onClose }: SignUpFormProps) => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -73,7 +75,6 @@ const SignUpForm = () => {
           router.push("/verifique-seu-email");
         },
         onError: (ctx) => {
-          console.log(ctx);
           if (ctx.error.code === "USER_ALREADY_EXISTS") {
             toast.error("Email já cadastrado.");
             return;
@@ -89,9 +90,15 @@ const SignUpForm = () => {
       <Toaster />
       <Card className="relative">
         {/* Botão para fechar o modal */}
-        <DialogClose className="absolute top-4 right-4 text-gray-500 hover:text-black">
-          <XIcon className="h-5 w-5" />
-        </DialogClose>
+        {onClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute top-4 right-4 text-gray-500 hover:text-black"
+          >
+            <XIcon className="h-5 w-5" />
+          </button>
+        )}
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -101,7 +108,7 @@ const SignUpForm = () => {
             </CardHeader>
 
             <CardContent className="space-y-4">
-              {/* Campo Nome */}
+              {/* Nome */}
               <FormField
                 control={form.control}
                 name="name"
@@ -116,7 +123,7 @@ const SignUpForm = () => {
                 )}
               />
 
-              {/* Campo Email */}
+              {/* Email */}
               <FormField
                 control={form.control}
                 name="email"
@@ -131,7 +138,7 @@ const SignUpForm = () => {
                 )}
               />
 
-              {/* Campo Senha */}
+              {/* Senha */}
               <FormField
                 control={form.control}
                 name="senha"
@@ -167,7 +174,7 @@ const SignUpForm = () => {
                 )}
               />
 
-              {/* Campo Confirmar Senha */}
+              {/* Confirmar senha */}
               <FormField
                 control={form.control}
                 name="confirmarSenha"
