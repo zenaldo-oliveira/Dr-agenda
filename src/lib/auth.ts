@@ -33,8 +33,19 @@ export const auth = betterAuth({
         },
       });
 
-      //TODO: Ao adicionar as clínicas à sessão, é necessário atualizar o tipo de sessão para incluir as clínicas
-      const clinic = clinics[0];
+      const clinic = clinics[0]; // pode ser undefined!
+
+      // ✅ Verifica se existe antes de acessar
+      if (!clinic || !clinic.clinic) {
+        // Se o usuário não tiver clínica, ainda devolve a sessão sem erro
+        return {
+          user: {
+            ...user,
+            clinic: null, // ou nem inclui essa propriedade se preferir
+          },
+        };
+      }
+
       return {
         user: {
           ...user,
@@ -46,6 +57,7 @@ export const auth = betterAuth({
       };
     }),
   ],
+
   user: {
     modelName: "usersTable",
   },
