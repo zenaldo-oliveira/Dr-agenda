@@ -21,9 +21,11 @@ const DoctorsPage = async () => {
   if (!session?.user) {
     redirect("/authentication");
   }
+
   if (!session?.user.clinic) {
     redirect("/clinics-form");
   }
+
   return (
     <PageContainer>
       <PageHeader>

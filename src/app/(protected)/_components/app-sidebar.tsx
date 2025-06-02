@@ -113,7 +113,7 @@ export function AppSidebar() {
                   </Avatar>
                   <div className="text-left">
                     <p className="text-sm font-medium">
-                      {session.data?.user.clinic?.name ?? (
+                      {session.data?.user?.clinic?.name ?? (
                         <span className="text-xs text-red-500">
                           Sem clínica vinculada
                         </span>
