@@ -1,17 +1,15 @@
 "use client";
 
 import {
-  Calendar,
   CalendarDays,
-  Home,
-  Inbox,
   LayoutDashboard,
   LogOut,
-  Search,
   Stethoscope,
   UserRound,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
 
 import {
   Sidebar,
@@ -25,23 +23,22 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import Image from "next/image";
-import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
+
 import {
+  DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
-// Menu items.
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { authClient } from "@/lib/auth-client";
+
+// Menu items
 const items = [
   {
     title: "Dashboard",
-    url: "/deshboard",
+    url: "/dashboard", // ✅ Corrigido
     icon: LayoutDashboard,
   },
   {
@@ -64,6 +61,7 @@ const items = [
 export function AppSidebar() {
   const router = useRouter();
   const session = authClient.useSession();
+  const pathname = usePathname();
 
   const handleSignOut = async () => {
     await authClient.signOut({
@@ -80,17 +78,18 @@ export function AppSidebar() {
       <SidebarHeader className="border-b px-6 py-4">
         <Image src="/logo.svg" alt="Doutor agenda" width={136} height={28} />
       </SidebarHeader>
+
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Menu Principal</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
+              {items.map(({ title, url, icon: Icon }) => (
+                <SidebarMenuItem key={title}>
+                  <SidebarMenuButton asChild isActive={pathname === url}>
+                    <Link href={url} className="flex items-center gap-2">
+                      <Icon className="h-4 w-4" />
+                      <span>{title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -99,29 +98,36 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
       <SidebarFooter className="border-t px-6 py-4">
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton size="lg" className="bg-transparent">
+                <SidebarMenuButton
+                  size="lg"
+                  className="flex items-center gap-2 bg-transparent"
+                >
                   <Avatar>
                     <AvatarFallback>Z</AvatarFallback>
                   </Avatar>
-                  <div>
-                    <p className="text-sm">{session.data?.user.clinic.name}</p>
+                  <div className="text-left">
+                    <p className="text-sm font-medium">
+                      {session.data?.user.clinic.name || "Clínica"}
+                    </p>
                     <p className="text-muted-foreground text-sm">
-                      {session.data?.user.email}
+                      {session.data?.user.email || "email@dominio.com"}
                     </p>
                   </div>
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
+
               <DropdownMenuContent>
                 <DropdownMenuItem
                   onClick={handleSignOut}
-                  className="cursor-pointer"
+                  className="flex cursor-pointer items-center gap-2"
                 >
-                  <LogOut className="mr-2 h-4 w-4" />
+                  <LogOut className="h-4 w-4" />
                   <span>Sair</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
