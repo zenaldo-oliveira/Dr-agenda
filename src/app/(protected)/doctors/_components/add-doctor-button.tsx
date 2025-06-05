@@ -9,7 +9,7 @@ const AddDoctorButton = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>
+        <Button> 
           <Plus />
           Adicionar Médico
         </Button>

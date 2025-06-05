@@ -15,18 +15,5 @@ export const upsertDoctor = async (data: UpsertDoctorSchema) => {
   if (!session?.user.clinic?.id) {
     throw new Error("Clinic not found");
   }
-
-  await db
-    .insert(doctorsTable)
-    .values({
-      id: data.id,
-      clinicId: session?.user.clinic?.id,
-      ...data,
-    })
-    .onConflictDoUpdate({
-      target: [doctorsTable.id],
-      set: {
-        ...data,
-      },
-    });
 };
+

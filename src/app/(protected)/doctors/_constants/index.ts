@@ -36,7 +36,7 @@ export enum MedicalSpecialty {
 
 export const medicalSpecialties = Object.entries(MedicalSpecialty).map(
   ([key, value]) => ({
-    value: key as keyof typeof MedicalSpecialty,
+    value: MedicalSpecialty[key as keyof typeof MedicalSpecialty],
     label: value,
   }),
 );
