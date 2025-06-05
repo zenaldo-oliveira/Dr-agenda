@@ -1,16 +1,22 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogTrigger } from "@radix-ui/react-dialog";
-import { Plus } from "lucide-react";
-import UpsertDoctorForm from "./upsert-doctor-form";
 import { useState } from "react";
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import UpsertDoctorForm from "./upsert-doctor-form";
 
 const AddDoctorButton = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog>
       <DialogTrigger asChild>
         <Button>
           <Plus />
