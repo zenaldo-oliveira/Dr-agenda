@@ -4,24 +4,23 @@ export const upsertDoctorSchema = z
   .object({
     id: z.string().uuid().optional(),
 
-    name: z.string().trim().min(1, {
+    clinicId: z.string({
+      required_error: "Clínica é obrigatória.",
+    }),
+
+    name: z.string().min(1, {
       message: "Nome é obrigatório.",
     }),
 
-    specialty: z.string().trim().min(1, {
-      message: "Especialidade é obrigatória.",
+    avatarImageUrl: z.string().url().optional(),
+
+    // no banco é TEXT, então pode ser string normal
+    availableFromWeekdays: z.string().min(1, {
+      message: "Dia de início é obrigatório.",
     }),
 
-    appointmentPriceInCents: z.number().min(1, {
-      message: "Preço da consulta é obrigatório.",
-    }),
-
-    availableFromWeekDay: z.number().min(0).max(6, {
-      message: "Dia da semana inicial deve estar entre 0 e 6.",
-    }),
-
-    availableToWeekDay: z.number().min(0).max(6, {
-      message: "Dia da semana final deve estar entre 0 e 6.",
+    availableToWeekday: z.number().min(0).max(6, {
+      message: "Dia da semana final inválido.",
     }),
 
     availableFromTime: z.string().min(1, {
@@ -31,19 +30,18 @@ export const upsertDoctorSchema = z
     availableToTime: z.string().min(1, {
       message: "Hora de término é obrigatória.",
     }),
+
+    speciality: z.string().min(1, {
+      message: "Especialidade é obrigatória.",
+    }),
+
+    appointmentPriceInCents: z.number().min(1, {
+      message: "Preço da consulta é obrigatório.",
+    }),
   })
-  .refine(
-    (data) =>
-      timeToMinutes(data.availableFromTime) <
-      timeToMinutes(data.availableToTime),
-    {
-      message: "A hora de início deve ser menor que a hora de término.",
-      path: ["availableFromTime"],
-    }
-  );;
+  .refine((data) => data.availableFromTime < data.availableToTime, {
+    message: "Hora de início não pode ser maior ou igual à hora de término.",
+    path: ["availableToTime"],
+  });
 
 export type UpsertDoctorSchema = z.infer<typeof upsertDoctorSchema>;
-function timeToMinutes(availableFromTime: string) {
-  throw new Error("Function not implemented.");
-}
-
