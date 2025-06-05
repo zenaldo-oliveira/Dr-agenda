@@ -2,6 +2,7 @@ import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { NumericFormat } from "react-number-format";
 import { Form, FormDescription, FormMessage } from "@/components/ui/form";
+import { useAction } from "next-safe-action/hooks";
 
 import {
   DialogContent,
@@ -30,6 +31,8 @@ import {
 } from "@/components/ui/select";
 import { Link, Moon, Sun, Sunrise } from "lucide-react";
 import { medicalSpecialties } from "../_constants";
+import { upsertDoctor } from "@/actions/upsert-doctor";
+import { toast } from "sonner";
 
 const formSchema = z
   .object({
@@ -62,7 +65,11 @@ const formSchema = z
     },
   );
 
-const UpsertDoctorForm = () => {
+interface UpsertDoctorFormProps {
+  onSuccess?: () => void;
+}
+
+const UpsertDoctorForm = ({ onSuccess }: UpsertDoctorFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -75,9 +82,27 @@ const UpsertDoctorForm = () => {
       availableToTime: "21:30",
     },
   });
+  const UpsertDoctorAction = useAction(upsertDoctor, {
+    onSuccess: () => {
+      toast.success("Médico adicionado com sucesso");
+      onSuccess?.();
+    },
+    onError: () => {
+      toast.error("Erro ao adicionar médico");
+    },
+  });
+
+  interface UpsertDoctorFormProps {
+    onSuccess?: () => void;
+  }
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    UpsertDoctorAction.execute({
+      ...values,
+      availableFromWeekDay: parseInt(values.availableFromWeekDay),
+      availableToWeekDay: parseInt(values.availableToWeekDay),
+      appointmentPriceInCents: values.appointmentPrice * 100,
+    });
   };
 
   return (
@@ -358,7 +383,9 @@ const UpsertDoctorForm = () => {
             )}
           />
           <DialogFooter>
-            <Button type="submit">Adicionar</Button>
+            <Button type="submit" disabled={UpsertDoctorAction.isExecuting}>
+              {UpsertDoctorAction.isExecuting ? "Adicionando..." : "Adicionar"}
+            </Button>
           </DialogFooter>
         </form>
       </Form>
@@ -367,3 +394,6 @@ const UpsertDoctorForm = () => {
 };
 
 export default UpsertDoctorForm;
+function onSuccess() {
+  throw new Error("Function not implemented.");
+}
