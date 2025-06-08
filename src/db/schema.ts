@@ -86,7 +86,7 @@ export const doctorsTable = pgTable("doctors", {
   availableToWeekday: integer("available_to_weekday").notNull(),
   availableFromTime: time("available_from_time").notNull(),
   availableToTime: time("available_to_time").notNull(),
-  speciality: text("speciality").notNull(),
+  speciality: text("speciality").notNull(), // ✔️ importante estar igual ao Zod
   appointmentPriceInCents: integer("appointment_price_in_cents").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")

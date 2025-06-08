@@ -5,12 +5,19 @@ import {
   LayoutDashboard,
   LogOut,
   Stethoscope,
-  UserRound,
+  UsersRound,
 } from "lucide-react";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Sidebar,
   SidebarContent,
@@ -23,22 +30,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { authClient } from "@/lib/auth-client";
 
-// Menu items
 const items = [
   {
     title: "Dashboard",
-    url: "/dashboard", // ✅ Corrigido
+    url: "/dashboard",
     icon: LayoutDashboard,
   },
   {
@@ -54,7 +51,7 @@ const items = [
   {
     title: "Pacientes",
     url: "/patients",
-    icon: UserRound,
+    icon: UsersRound,
   },
 ];
 
@@ -72,24 +69,22 @@ export function AppSidebar() {
       },
     });
   };
-
   return (
     <Sidebar>
-      <SidebarHeader className="border-b px-6 py-4">
-        <Image src="/logo.svg" alt="Doutor agenda" width={136} height={28} />
+      <SidebarHeader className="border-b p-4">
+        <Image src="/logo.svg" alt="Doutor Agenda" width={136} height={28} />
       </SidebarHeader>
-
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Menu Principal</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map(({ title, url, icon: Icon }) => (
-                <SidebarMenuItem key={title}>
-                  <SidebarMenuButton asChild isActive={pathname === url}>
-                    <Link href={url} className="flex items-center gap-2">
-                      <Icon className="h-4 w-4" />
-                      <span>{title}</span>
+              {items.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild isActive={pathname === item.url}>
+                    <Link href={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -98,41 +93,29 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-
-      <SidebarFooter className="border-t px-6 py-4">
+      <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton
-                  size="lg"
-                  className="flex items-center gap-2 bg-transparent"
-                >
+                <SidebarMenuButton size="lg">
                   <Avatar>
-                    <AvatarFallback>Z</AvatarFallback>
+                    <AvatarFallback>z</AvatarFallback>
                   </Avatar>
-                  <div className="text-left">
-                    <p className="text-sm font-medium">
-                      {session.data?.user?.clinic?.name ?? (
-                        <span className="text-xs text-red-500">
-                          Sem clínica vinculada
-                        </span>
-                      )}
+                  <div>
+                    <p className="text-sm">
+                      {session.data?.user?.clinic?.name}
                     </p>
                     <p className="text-muted-foreground text-sm">
-                      {session.data?.user.email || "email@dominio.com"}
+                      {session.data?.user.email}
                     </p>
                   </div>
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
-
               <DropdownMenuContent>
-                <DropdownMenuItem
-                  onClick={handleSignOut}
-                  className="flex cursor-pointer items-center gap-2"
-                >
-                  <LogOut className="h-4 w-4" />
-                  <span>Sair</span>
+                <DropdownMenuItem onClick={handleSignOut}>
+                  <LogOut />
+                  Sair
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

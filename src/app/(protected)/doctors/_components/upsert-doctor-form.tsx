@@ -33,55 +33,26 @@ import { Link, Moon, Sun, Sunrise } from "lucide-react";
 import { medicalSpecialties } from "../_constants";
 import { upsertDoctor } from "@/actions/upsert-doctor";
 import { toast } from "sonner";
-
-const formSchema = z
-  .object({
-    name: z.string().trim().min(1, {
-      message: "Nome é obrigatório.",
-    }),
-    specialty: z.string().trim().min(1, {
-      message: "Especialidade é obrigatória.",
-    }),
-    appointmentPrice: z.number().min(1, {
-      message: "Preço da consulta é obrigatório.",
-    }),
-    availableFromWeekDay: z.string(),
-    availableToWeekDay: z.string(),
-
-    availableFromTime: z.string().min(1, {
-      message: "Hora de início é obrigatória.",
-    }),
-    availableToTime: z.string().min(1, {
-      message: "Hora de término é obrigatória.",
-    }),
-  })
-  .refine(
-    (data) => {
-      return data.availableFromTime < data.availableToTime;
-    },
-    {
-      message: "Hora de início não pode ser anterior ao horário do término.",
-      path: ["availableToTime"],
-    },
-  );
+import { upsertDoctorSchema } from "@/actions/upsert-doctor/schema";
 
 interface UpsertDoctorFormProps {
   onSuccess?: () => void;
 }
 
 const UpsertDoctorForm = ({ onSuccess }: UpsertDoctorFormProps) => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof upsertDoctorSchema>>({
+    resolver: zodResolver(upsertDoctorSchema),
     defaultValues: {
       name: "",
-      specialty: "",
-      appointmentPrice: 0,
-      availableFromWeekDay: "1",
-      availableToWeekDay: "5",
+      speciality: "",
+      appointmentPriceInCents: 0,
+      availableFromWeekdays: "1",
+      availableToWeekday: 5,
       availableFromTime: "08:00",
       availableToTime: "21:30",
     },
   });
+
   const UpsertDoctorAction = useAction(upsertDoctor, {
     onSuccess: () => {
       toast.success("Médico adicionado com sucesso");
@@ -92,16 +63,10 @@ const UpsertDoctorForm = ({ onSuccess }: UpsertDoctorFormProps) => {
     },
   });
 
-  interface UpsertDoctorFormProps {
-    onSuccess?: () => void;
-  }
-
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = (values: z.infer<typeof upsertDoctorSchema>) => {
     UpsertDoctorAction.execute({
       ...values,
-      availableFromWeekDay: parseInt(values.availableFromWeekDay),
-      availableToWeekDay: parseInt(values.availableToWeekDay),
-      appointmentPriceInCents: values.appointmentPrice * 100,
+      appointmentPriceInCents: values.appointmentPriceInCents * 100,
     });
   };
 
@@ -128,7 +93,7 @@ const UpsertDoctorForm = ({ onSuccess }: UpsertDoctorFormProps) => {
           />
           <FormField
             control={form.control}
-            name="specialty"
+            name="speciality"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Especialidade</FormLabel>
@@ -155,7 +120,7 @@ const UpsertDoctorForm = ({ onSuccess }: UpsertDoctorFormProps) => {
           />
           <FormField
             control={form.control}
-            name="appointmentPrice"
+            name="appointmentPriceInCents"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Preço da consulta</FormLabel>
@@ -178,7 +143,7 @@ const UpsertDoctorForm = ({ onSuccess }: UpsertDoctorFormProps) => {
           />
           <FormField
             control={form.control}
-            name="availableFromWeekDay"
+            name="availableFromWeekdays"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Dia inicial da disponibilidade</FormLabel>
@@ -207,7 +172,7 @@ const UpsertDoctorForm = ({ onSuccess }: UpsertDoctorFormProps) => {
           />
           <FormField
             control={form.control}
-            name="availableToWeekDay"
+            name="availableToWeekday"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Dia final da disponibilidade</FormLabel>
@@ -394,6 +359,3 @@ const UpsertDoctorForm = ({ onSuccess }: UpsertDoctorFormProps) => {
 };
 
 export default UpsertDoctorForm;
-function onSuccess() {
-  throw new Error("Function not implemented.");
-}
