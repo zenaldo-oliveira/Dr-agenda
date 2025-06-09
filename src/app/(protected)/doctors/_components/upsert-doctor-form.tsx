@@ -33,7 +33,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { medicalSpecialties } from "../_constants";
-import { UpsertDoctor } from "@/actions/upsert-doctor";
+import { upsertDoctor } from "@/actions/upsert-doctor";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
@@ -86,7 +86,7 @@ const UpsertDoctorForm = ({ onSuccess }: UpsertDoctorFormProps) => {
     },
   });
 
-  const upsertDoctorAction = useAction(UpsertDoctor, {
+  const upsertDoctorAction = useAction(upsertDoctor, {
     onSuccess: () => {
       toast.success("Médico atualizado com sucesso");
       onSuccess?.();
