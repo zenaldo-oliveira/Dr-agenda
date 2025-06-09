@@ -21,6 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { DialogContent } from "@/components/ui/dialog";
+import { useAction } from "next-safe-action/hooks";
 import { NumericFormat } from "react-number-format";
 import {
   Select,
@@ -32,6 +33,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { medicalSpecialties } from "../_constants";
+import { UpsertDoctor } from "@/actions/upsert-doctor";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 const formSchema = z
   .object({
@@ -64,7 +68,11 @@ const formSchema = z
     },
   );
 
-const UpsertDoctorForm = () => {
+interface UpsertDoctorFormProps {
+  onSuccess?: () => void;
+}
+
+const UpsertDoctorForm = ({ onSuccess }: UpsertDoctorFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -78,8 +86,22 @@ const UpsertDoctorForm = () => {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data);
+  const upsertDoctorAction = useAction(UpsertDoctor, {
+    onSuccess: () => {
+      toast.success("Médico atualizado com sucesso");
+      onSuccess?.();
+    },
+    onError: () => {
+      toast.error("Erro ao atualizar médico");
+    },
+  });
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    upsertDoctorAction.execute({
+      ...values,
+      availableFromWeekDay: parseInt(values.availableFromWeekDay),
+      availableToWeekDay: parseInt(values.availableToWeekDay),
+      appointmentPriceInCents: Math.round(values.appointmentPrice * 100),
+    });
   };
 
   return (
@@ -346,7 +368,16 @@ const UpsertDoctorForm = () => {
           />
 
           <DialogFooter>
-            <Button type="submit">Adicionar</Button>
+            <Button type="submit" disabled={upsertDoctorAction.isExecuting}>
+              {upsertDoctorAction.isExecuting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Salvando...
+                </>
+              ) : (
+                "Salvar"
+              )}
+            </Button>
           </DialogFooter>
         </form>
       </Form>

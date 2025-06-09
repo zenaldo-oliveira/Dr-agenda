@@ -17,9 +17,8 @@ const AddDoctorButton = () => {
         </Button>
       </DialogTrigger>
       <DialogContent>
-        
+        <UpsertDoctorForm onSuccess={() => setIsOpen(false)} />
       </DialogContent>
-      <UpsertDoctorForm />
     </Dialog>
   );
 };
