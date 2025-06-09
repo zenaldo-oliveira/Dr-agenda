@@ -1,16 +1,11 @@
 import { db } from "@/db";
-import {
-  usersTable,
-  sessionsTable,
-  accountsTable,
-  verificationsTable,
-  usersToClinicsTable,
-} from "@/db/schema";
+
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import * as schema from "@/db/schema";
 import { customSession } from "better-auth/plugins";
 import { eq } from "drizzle-orm";
+import { usersToClinicsTable } from "@/db/schema";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -34,7 +29,6 @@ export const auth = betterAuth({
       });
 
       const clinic = clinics?.[0];
-
       return {
         user: {
           ...user,

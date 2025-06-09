@@ -6,23 +6,25 @@ export const upsertDoctorSchema = z
     name: z.string().trim().min(1, {
       message: "Nome é obrigatório.",
     }),
-    speciality: z.string().trim().min(1, {
+    specialty: z.string().trim().min(1, {
       message: "Especialidade é obrigatória.",
     }),
     appointmentPriceInCents: z.number().min(1, {
       message: "Preço da consulta é obrigatório.",
     }),
-    availableFromWeekdays: z.string().min(1, {
-      message: "Dia da semana (início) é obrigatório.",
-    }), // texto, como no banco
-    availableToWeekday: z.number().min(0).max(6),
+    availableFromWeekDay: z.number().min(0).max(6, {
+      message: "Dia da semana (início) inválido.",
+    }),
+    availableToWeekDay: z.number().min(0).max(6, {
+      message: "Dia da semana (término) inválido.",
+    }),
     availableFromTime: z.string().min(1, {
       message: "Hora de início é obrigatória.",
     }),
     availableToTime: z.string().min(1, {
       message: "Hora de término é obrigatória.",
     }),
-    avatar: z.string().optional().nullable(),
+    avatarImageUrl: z.string().optional().nullable(),
   })
   .refine(
     (data) => {
