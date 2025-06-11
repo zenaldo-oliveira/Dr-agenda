@@ -96,10 +96,17 @@ const UpsertDoctorForm = ({ onSuccess }: UpsertDoctorFormProps) => {
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
+    const addSeconds = (time: string) => {
+      // Se o horário estiver no formato "HH:mm" (5 caracteres), adiciona ":00"
+      return time.length === 5 ? time + ":00" : time;
+    };
+
     upsertDoctorAction.execute({
       ...values,
       availableFromWeekDay: parseInt(values.availableFromWeekDay),
       availableToWeekDay: parseInt(values.availableToWeekDay),
+      availableFromTime: addSeconds(values.availableFromTime),
+      availableToTime: addSeconds(values.availableToTime),
       appointmentPriceInCents: values.appointmentPrice * 100,
     });
   };
