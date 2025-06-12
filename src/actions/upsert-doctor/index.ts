@@ -9,6 +9,7 @@ import { headers } from "next/headers";
 
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
+import { revalidatePath } from "next/dist/server/web/spec-extension/revalidate";
 
 dayjs.extend(utc);
 
@@ -73,4 +74,5 @@ export const upsertDoctor = actionClient
           availableToTime: availableToTimeUTC.format("HH:mm:ss"),
         },
       });
+    revalidatePath("/doctors");
   });

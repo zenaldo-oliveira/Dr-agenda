@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import { useForm } from "react-hook-form";
 import { NumericFormat } from "react-number-format";
 import { medicalSpecialties } from "../_constants";
@@ -62,7 +63,7 @@ const formSchema = z
     },
     {
       message:
-        "O horário de unicio não pode ser anterio ao horário de término ",
+        "O horário de unicio não pode ser anterior ao horário de término ",
       path: ["availableToTime"],
     },
   );
