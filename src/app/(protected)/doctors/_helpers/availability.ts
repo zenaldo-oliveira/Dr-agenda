@@ -1,27 +1,22 @@
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import "dayjs/locale/pt-br";
-
+import timezone from "dayjs/plugin/timezone";
 import { doctorsTable } from "@/db/schema";
 
 dayjs.extend(utc);
-dayjs.locale("pt-br");
+dayjs.extend(timezone);
 
 export const getAvailability = (doctor: typeof doctorsTable.$inferSelect) => {
-  const from = dayjs()
-    .utc()
-    .day(doctor.availableFromWeekDay)
-    .set("hour", Number(doctor.availableFromTime.split(":")[0]))
-    .set("minute", Number(doctor.availableFromTime.split(":")[1]))
-    .set("second", Number(doctor.availableFromTime.split(":")[2] || 0))
-    .local();
+  const from = dayjs
+    .utc(`1970-01-01T${doctor.availableFromTime}Z`)
+    .tz("America/Sao_Paulo");
 
-  const to = dayjs()
-    .utc()
-    .day(doctor.availableToWeekDay)
-    .set("hour", Number(doctor.availableFromTime.split(":")[0]))
-    .set("minute", Number(doctor.availableFromTime.split(":")[1]))
-    .set("second", Number(doctor.availableFromTime.split(":")[2] || 0))
-    .local();
-  return { from, to };
+  const to = dayjs
+    .utc(`1970-01-01T${doctor.availableToTime}Z`)
+    .tz("America/Cuiaba");
+
+  return {
+    from,
+    to,
+  };
 };
