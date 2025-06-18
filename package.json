@@ -46,6 +46,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.29.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -53,7 +54,7 @@
     "@types/react-input-mask": "^3.0.6",
     "dotenv-cli": "^8.0.0",
     "drizzle-kit": "^0.31.1",
-    "eslint": "^9.27.0",
+    "eslint": "^9.29.0",
     "eslint-config-next": "^15.3.2",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "prettier": "^3.5.3",

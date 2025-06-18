@@ -24,6 +24,7 @@ export const deleteDoctor = actionClient
     }
 
     const doctor = await db.query.doctorsTable.findFirst({
+
       where: eq(doctorsTable.id, parsedInput.id),
     });
 
@@ -33,6 +34,7 @@ export const deleteDoctor = actionClient
 
     // Permite deletar somente se o médico pertence à clínica do usuário
     if (doctor.clinicId !== session.user.clinic?.id) {
+        
       throw new Error("Médico não encontrado");
     }
 

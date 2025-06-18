@@ -27,6 +27,7 @@ const DashboardPage = async () => {
           {session.user.image && (
             <img
               src={session.user.image}
+              
               alt={`${session.user.name} foto`}
               className="mx-auto mb-4 h-24 w-24 rounded-full object-cover"
             />
